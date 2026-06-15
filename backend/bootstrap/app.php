@@ -73,16 +73,9 @@ namespace {
             $middleware->trustProxies(at: '*');
         })
         ->withExceptions(function (Exceptions $exceptions): void {
-            $exceptions->render(function (\Throwable $e, Request $request) {
-                header('Content-Type: application/json');
-                http_response_code(500);
-                echo json_encode([
-                    'error_message' => $e->getMessage(),
-                    'exception_class' => get_class($e),
-                    'stack_trace' => $e->getTraceAsString()
-                ]);
-                exit;
-            });
+            $exceptions->shouldRenderJsonWhen(
+                fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+            );
         })->create();
 
     if (env('VERCEL')) {
