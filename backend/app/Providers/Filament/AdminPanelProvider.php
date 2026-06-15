@@ -32,6 +32,10 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->brandName('PSAMS PSTI')
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_END,
+                fn (): string => '<script defer src="/_vercel/insights/script.js"></script>',
+            )
             ->brandLogo(asset('logo-psti.png'))
             ->brandLogoHeight('3.5rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

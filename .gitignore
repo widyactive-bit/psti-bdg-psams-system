@@ -60,3 +60,5 @@ mobile/android/build.gradle
 mobile/android/local.properties
 mobile/build/
 mobile/android/app/src/main/java/io/flutter/plugins/
+
+.vercel

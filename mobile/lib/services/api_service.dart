@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   // Use the public temporary tunnel URL for backend API requests
-  static const String baseUrl = 'https://c3e38d22be24b5.lhr.life/api'; 
+  static const String baseUrl = 'https://58bae5d00d88e8.lhr.life/api'; 
 
 
   Future<String?> _getToken() async {

@@ -1,7 +1,11 @@
 import os
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI, HTTPException
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
+# pyrefly: ignore [missing-import]
 from openai import OpenAI
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 
 # Load env variables
@@ -16,8 +20,11 @@ app = FastAPI(
 # Initialize OpenAI Client
 # Gets API key from environment variable OPENAI_API_KEY
 client = None
-if os.getenv("OPENAI_API_KEY"):
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+if os.getenv("OPENAI_API_KEY") and not os.getenv("OPENAI_API_KEY").startswith("sk-proj-placeholder"):
+    try:
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    except Exception as e:
+        print(f"Failed to initialize OpenAI client: {e}. AI service will run in fallback mock mode.")
 
 class StatMetrics(BaseModel):
     tendangan: float = Field(..., ge=0, le=100)

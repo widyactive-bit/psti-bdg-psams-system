@@ -62,7 +62,7 @@ namespace {
     use Illuminate\Foundation\Configuration\Middleware;
     use Illuminate\Http\Request;
 
-    return Application::configure(basePath: dirname(__DIR__))
+    $app = Application::configure(basePath: dirname(__DIR__))
         ->withRouting(
             web: __DIR__.'/../routes/web.php',
             api: __DIR__.'/../routes/api.php',
@@ -73,8 +73,37 @@ namespace {
             $middleware->trustProxies(at: '*');
         })
         ->withExceptions(function (Exceptions $exceptions): void {
-            $exceptions->shouldRenderJsonWhen(
-                fn (Request $request) => $request->is('api/*'),
-            );
+            $exceptions->render(function (\Throwable $e, Request $request) {
+                header('Content-Type: application/json');
+                http_response_code(500);
+                echo json_encode([
+                    'error_message' => $e->getMessage(),
+                    'exception_class' => get_class($e),
+                    'stack_trace' => $e->getTraceAsString()
+                ]);
+                exit;
+            });
         })->create();
+
+    if (env('VERCEL')) {
+        $app->useStoragePath('/tmp/storage');
+        $storagePaths = [
+            '/tmp/storage',
+            '/tmp/storage/app',
+            '/tmp/storage/app/public',
+            '/tmp/storage/framework',
+            '/tmp/storage/framework/views',
+            '/tmp/storage/framework/cache',
+            '/tmp/storage/framework/sessions',
+            '/tmp/storage/bootstrap',
+            '/tmp/storage/bootstrap/cache',
+        ];
+        foreach ($storagePaths as $path) {
+            if (!is_dir($path)) {
+                mkdir($path, 0755, true);
+            }
+        }
+    }
+
+    return $app;
 }

@@ -26,6 +26,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "ext-intl": "8.0.0"
         }
     },
     "extra": {
@@ -44,6 +47,15 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "vercel": [
+            "@php artisan package:discover --ansi"
+        ]
     },
     "minimum-stability": "stable",
     "prefer-stable": true
