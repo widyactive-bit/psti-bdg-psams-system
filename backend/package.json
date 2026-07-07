@@ -13,6 +13,7 @@
         "vite": "^5.1.4"
     },
     "dependencies": {
+        "@vercel/speed-insights": "^1.1.0",
         "chart.js": "^4.4.2"
     }
 }
