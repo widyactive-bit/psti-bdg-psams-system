@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Achievement extends Model
 {
+    protected $table = 'achievements';
+
     protected $fillable = [
         'athlete_id',
         'nama_kejuaraan',

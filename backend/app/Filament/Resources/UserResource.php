@@ -59,6 +59,11 @@ class UserResource extends Resource
 
                 Forms\Components\Section::make('Informasi Kontak & Dokumen Registrasi')
                     ->schema([
+                        Forms\Components\FileUpload::make('foto')
+                            ->image()
+                            ->label('Pas Foto')
+                            ->openable()
+                            ->downloadable(),
                         Forms\Components\TextInput::make('no_hp')
                             ->disabled()
                             ->label('No. Handphone'),

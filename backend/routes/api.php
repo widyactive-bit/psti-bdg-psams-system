@@ -6,6 +6,16 @@ use App\Http\Controllers\API\AttendanceApiController;
 use App\Http\Controllers\API\ScheduleApiController;
 use Illuminate\Support\Facades\Route;
 
+// Health Check Endpoint (for monitoring/deployment)
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now()->toIso8601String(),
+        'service' => 'PSAMS Backend API',
+        'environment' => config('app.env'),
+    ]);
+});
+
 // Public Auth Routes
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);

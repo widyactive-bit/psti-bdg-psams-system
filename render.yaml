@@ -1,5 +1,5 @@
 services:
-  # 1. FastAPI AI Service
+  # 1. FastAPI AI Service (Python)
   - type: web
     name: psams-ai-service
     env: python
@@ -7,25 +7,35 @@ services:
     rootDir: ai_service
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    healthCheckInterval: 300
+    autoDeploy: true
     envVars:
       - key: OPENAI_API_KEY
-        value: sk-proj-placeholder
+        sync: false  # Must be set manually in Render Dashboard
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: LOG_LEVEL
+        value: info
 
-  # 2. Laravel Backend Service
+  # 2. Laravel Backend Service (PHP)
   - type: web
     name: psams-backend
     env: php
     branch: finish-resources
     rootDir: backend
-    buildCommand: composer install --no-dev --optimize-autoloader
-    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    buildCommand: composer install --no-dev --optimize-autoloader && php artisan migrate --force
+    startCommand: php -S 0.0.0.0:$PORT -t public
+    healthCheckPath: /api/health
+    healthCheckInterval: 300
+    autoDeploy: true
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: "false"
       - key: APP_KEY
-        value: base64:CQj++MWdis50c7wljMSVaKvJ3GDWHS9+Mqnvy9qhsfo=
+        sync: false  # Must be set manually - generate with: php artisan key:generate
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -47,7 +57,11 @@ services:
           name: psams-db
           property: password
       - key: AI_SERVICE_URL
-        value: http://psams-ai-service:8000/analyze # Will be resolved within Render private network
+        value: https://psams-ai-service.onrender.com  # Cross-service URL
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
 
 databases:
   # 3. PostgreSQL Database (Free Tier)

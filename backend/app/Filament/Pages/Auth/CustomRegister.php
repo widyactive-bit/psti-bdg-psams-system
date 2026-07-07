@@ -55,7 +55,9 @@ class CustomRegister extends BaseRegister
                         ->required()
                         ->image()
                         ->openable()
-                        ->downloadable(),
+                        ->downloadable()
+                        ->maxSize(4096)
+                        ->acceptedFileTypes(['image/jpeg','image/png','image/webp']),
                         
                     FileUpload::make('kk')
                         ->label('Upload Kartu Keluarga (KK)')
@@ -63,7 +65,9 @@ class CustomRegister extends BaseRegister
                         ->required()
                         ->image()
                         ->openable()
-                        ->downloadable(),
+                        ->downloadable()
+                        ->maxSize(4096)
+                        ->acceptedFileTypes(['image/jpeg','image/png','image/webp']),
                         
                     FileUpload::make('sertifikat')
                         ->label('Sertifikat Pendukung (Optional)')
@@ -71,7 +75,18 @@ class CustomRegister extends BaseRegister
                         ->multiple()
                         ->nullable()
                         ->openable()
-                        ->downloadable(),
+                        ->downloadable()
+                        ->maxSize(5120)
+                        ->acceptedFileTypes(['image/jpeg','image/png','image/webp','application/pdf']),
+                    FileUpload::make('pas_foto')
+                        ->label('Upload Pas Foto')
+                        ->directory('registrasi/pas_foto')
+                        ->image()
+                        ->required()
+                        ->openable()
+                        ->downloadable()
+                        ->maxSize(2048)
+                        ->acceptedFileTypes(['image/jpeg','image/png','image/webp']),
                 ])
                 ->statePath('data'),
         ];
@@ -90,6 +105,7 @@ class CustomRegister extends BaseRegister
             'ktp' => $data['ktp'],
             'kk' => $data['kk'],
             'sertifikat' => $data['sertifikat'] ?? null,
+            'foto' => $data['pas_foto'] ?? null,
             'status' => 'Aktif', // Sementara Aktif agar bisa langsung login
         ]);
 
@@ -103,7 +119,8 @@ class CustomRegister extends BaseRegister
                     'alamat' => $data['alamat'],
                     'ktp' => $data['ktp'],
                     'kk' => $data['kk'],
-                    'sertifikat' => $data['sertifikat'] ?? null,
+                        'sertifikat' => $data['sertifikat'] ?? null,
+                        'foto' => $data['pas_foto'] ?? null,
                     'status' => 'Nonaktif',
                 ]);
                 break;

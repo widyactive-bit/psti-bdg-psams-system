@@ -120,8 +120,55 @@ class AthleteResource extends Resource
                         Forms\Components\FileUpload::make('foto')
                             ->image()
                             ->directory('athletes-photos')
-                            ->label('Foto Profil'),
+                            ->label('Foto Profil')
+                            ->maxSize(2048) // 2 MB
+                            ->acceptedFileTypes(['image/jpeg','image/png','image/webp']),
                     ])->columns(2),
+                Forms\Components\Section::make('Prestasi & Kegiatan')
+                    ->schema([
+Forms\Components\Repeater::make('achievement_entries')
+                     ->label('Prestasi / Target Pencapaian')
+                     ->schema([
+                         Forms\Components\TextInput::make('title')
+                             ->required()
+                             ->label('Judul Prestasi / Target'),
+                         Forms\Components\TextInput::make('tingkat')
+                             ->required()
+                             ->label('Tingkat'),
+                         Forms\Components\TextInput::make('lokasi')
+                             ->required()
+                             ->label('Lokasi'),
+                                Forms\Components\DatePicker::make('date')
+                                    ->label('Tanggal'),
+                                Forms\Components\Textarea::make('notes')
+                                    ->label('Keterangan'),
+                            ])
+                            ->columns(1)
+                            ->createItemButtonLabel('Tambah Prestasi'),
+
+                        Forms\Components\Repeater::make('activity_photos')
+                            ->label('Foto Kegiatan & Geotag')
+                            ->schema([
+                                Forms\Components\FileUpload::make('photo')
+                                    ->image()
+                                    ->directory('activity-photos')
+                                    ->label('Foto Kegiatan')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->maxSize(5120) // 5 MB
+                                    ->acceptedFileTypes(['image/jpeg','image/png','image/webp']),
+                                Forms\Components\TextInput::make('latitude')
+                                    ->numeric()
+                                    ->label('Latitude'),
+                                Forms\Components\TextInput::make('longitude')
+                                    ->numeric()
+                                    ->label('Longitude'),
+                                Forms\Components\Textarea::make('description')
+                                    ->label('Keterangan Foto'),
+                            ])
+                            ->columns(1)
+                            ->createItemButtonLabel('Tambah Foto Kegiatan'),
+                    ])->columns(1),
 
                 Forms\Components\Section::make('Dokumen Registrasi (Uploads)')
                     ->schema([

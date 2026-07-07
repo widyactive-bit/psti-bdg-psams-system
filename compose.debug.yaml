@@ -1,6 +1,0 @@
-services:
-  arsitektursistempstikotabandung:
-    image: arsitektursistempstikotabandung
-    build:
-      context: .
-      dockerfile: ./Dockerfile

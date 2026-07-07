@@ -72,6 +72,7 @@ class AuthController extends Controller
             'no_hp' => 'required|string',
             'ktp' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'kk' => 'required|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'pas_foto' => 'required|file|mimes:jpeg,png,jpg,webp|max:2048',
             'sertifikat.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
@@ -84,6 +85,11 @@ class AuthController extends Controller
         $kkPath = null;
         if ($request->hasFile('kk')) {
             $kkPath = $request->file('kk')->store('registrasi/kk', 'public');
+        }
+
+        $pasFotoPath = null;
+        if ($request->hasFile('pas_foto')) {
+            $pasFotoPath = $request->file('pas_foto')->store('registrasi/pas_foto', 'public');
         }
 
         $sertifikatPaths = [];
@@ -104,6 +110,13 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'Atlet', // Default registered role
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'ktp' => $ktpPath,
+            'kk' => $kkPath,
+            'sertifikat' => $sertifikatPaths,
+            'foto' => $pasFotoPath,
+            'status' => 'Nonaktif',
         ]);
 
         // Create Athlete
@@ -115,6 +128,7 @@ class AuthController extends Controller
             'ktp' => $ktpPath,
             'kk' => $kkPath,
             'sertifikat' => $sertifikatPaths,
+            'foto' => $pasFotoPath,
             'status' => 'Nonaktif', // Require administrative approval
         ]);
 

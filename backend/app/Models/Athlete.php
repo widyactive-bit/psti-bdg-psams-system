@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Achievement;
 
 class Athlete extends Model
 {
@@ -30,6 +31,8 @@ class Athlete extends Model
         'ktp',
         'kk',
         'sertifikat',
+        'achievement_entries',
+        'activity_photos',
     ];
 
     protected $casts = [
@@ -37,6 +40,8 @@ class Athlete extends Model
         'tinggi_badan' => 'decimal:2',
         'berat_badan' => 'decimal:2',
         'sertifikat' => 'array',
+        'achievement_entries' => 'array',
+        'activity_photos' => 'array',
     ];
 
     public function coach(): BelongsTo
@@ -62,6 +67,41 @@ class Athlete extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class, 'athlete_id');
+    }
+
+    protected static function booted()
+    {
+        static::saved(function (self $athlete) {
+            // If the Filament form provided an `achievement_entries` JSON array, sync it to achievements table.
+            $items = $athlete->achievement_entries;
+            if (! $athlete->id) {
+                return;
+            }
+
+            if (is_string($items)) {
+                $items = json_decode($items, true) ?? [];
+            }
+
+            if (! is_array($items)) {
+                return;
+            }
+
+            // delete existing achievements and recreate from repeater
+            Achievement::where('athlete_id', $athlete->id)->delete();
+
+            foreach ($items as $item) {
+                // map simple repeater fields to achievement columns
+                Achievement::create([
+                    'athlete_id' => $athlete->id,
+                    'nama_kejuaraan' => $item['title'] ?? null,
+                    'tingkat' => $item['tingkat'] ?? 'Lokal',
+                    'lokasi' => $item['lokasi'] ?? 'Tidak Diketahui',
+                    'tanggal' => $item['date'] ?? null,
+                    'hasil' => $item['notes'] ?? null,
+                    'medali' => $item['medali'] ?? null,
+                ]);
+            }
+        });
     }
 
     /**
